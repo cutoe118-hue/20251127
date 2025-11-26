@@ -1,0 +1,33 @@
+/* Basic styles, responsive */
+:root{
+  --bg:#f6f7fb; --text:#1b1b1f; --card:#fff;
+  --accent:#3b82f6;
+}
+.dark{ --bg:#0b1220; --text:#e6eef8; --card:#071023; --accent:#7dd3fc; }
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system; background:var(--bg); color:var(--text); margin:0;padding:20px}
+.container{max-width:900px;margin:0 auto;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.08)}
+header{display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:1.6rem}
+.top-right{text-align:right}
+#todayDate{font-weight:600}
+.progress{background:rgba(0,0,0,0.06);height:12px;border-radius:10px;overflow:hidden;margin-top:6px;width:220px}
+#progressBar{height:100%;width:0;background:var(--accent);transition:width 300ms ease}
+#percent{font-size:0.95rem}
+.controls{display:flex;gap:12px;align-items:center;margin:12px 0;flex-wrap:wrap}
+.controls input[type=number]{width:80px;padding:6px;border-radius:6px;border:1px solid #ddd}
+.task{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.2))}
+.task label{display:flex;gap:10px;align-items:center}
+.task input{transform:scale(1.2)}
+footer{margin-top:12px;font-size:0.85rem;color:rgba(0,0,0,0.6)}
+
+/* confetti */
+.confetti{position:fixed;bottom:0;width:8px;height:12px;border-radius:2px;opacity:0.9; animation:pop 2.5s linear forwards; z-index:9999}
+@keyframes pop{0%{transform:translateY(0) rotate(0) scale(1)}50%{transform:translateY(-50vh) rotate(540deg)}100%{transform:translateY(-100vh) rotate(720deg); opacity:0}}
+
+/* print styles */
+@media print{
+  body{padding:0}
+  .container{box-shadow:none;border-radius:0}
+  .controls, footer, header .top-right{display:none}
+}

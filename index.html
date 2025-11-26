@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Todo Schedule</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>오늘의 Todo</h1>
+    <div class="top-right">
+      <div id="todayDate"></div>
+      <div id="progressWrap">
+        <div id="percent">0%</div>
+        <div class="progress">
+          <div id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="controls">
+      <label><input type="checkbox" id="darkToggle"> 다크모드</label>
+      <label>목표 개수: <input id="goalInput" type="number" min="1" value="0"></label>
+      <button id="resetBtn">체크 초기화</button>
+    </div>
+
+    <section id="todoList"></section>
+  </main>
+
+  <footer>
+    <small>데이터 출처: 업로드한 일정(PDF). fileciteturn0file0</small>
+  </footer>
+</div>
+
+<script>
+const tasks = [{"text": "11/27 목 13:00~14:00 미시경제학 1단원 1~10p (상세 학습) [ ]"}, {"text": "목 14:00~15:00 투자론 1단원 1~10p (상세 학습) [ ]"}, {"text": "목 15:00~16:00 경영학원론 1강 15p 정리 및 암기 (1/2) [ ]"}, {"text": "목 17:00~18:00 미시경제학 1단원 11~20p [ ]"}, {"text": "목 18:00~19:00 조직이론과 설계 1단원 공부 (핵심 개념 정리) [ ]"}, {"text": "목 20:00~21:00 투자론 1단원 11~20p [ ]"}, {"text": "목 21:00~22:00 경영학원론 1강 15p 정리 및 암기 (2/2) [ ]"}, {"text": "목 22:00~23:00 미시경제학 1단원 21~30p [ ]"}, {"text": "목 23:00~24:00 조직이론과 설계 1단원 족보 풀기 및 오픈북 위치 파악 [ ]"}, {"text": "11/28 금 15:00~16:00 미시경제학 1단원 31~40p [ ]"}, {"text": "금 16:00~17:00 투자론 1단원 21~30p [ ]"}, {"text": "금 17:00~18:00 조직이론과 설계 2단원 공부 (핵심 개념 정리) [ ]"}, {"text": "금 19:00~20:00 미시경제학 1단원 41~50p [ ]"}, {"text": "금 20:00~21:00 경영학원론 2강 30p 정리 및 암기 [ ]"}, {"text": "금 21:00~22:00 투자론 1단원 31~40p [ ]"}, {"text": "금 22:00~23:00 조직이론과 설계 2단원 족보 풀기 및 오픈북 위치 파악 [ ]"}, {"text": "금 23:00~24:00 미시경제학 1단원 51~60p (1단원 완료) [ ]"}, {"text": "11/29 토 21:00~22:00 투자론 1단원 41~50p [ ]"}, {"text": "토 22:00~23:00 미시경제학 2단원 1~10p [ ]"}, {"text": "토 23:00~24:00 경영학원론 3강 15p 정리 및 암기 (1/2) [ ]"}, {"text": "11/30 일 13:00~14:00 미시경제학 2단원 11~20p [ ]"}, {"text": "일 14:00~15:00 투자론 1단원 51~60p (1단원 완료) [ ]"}, {"text": "일 15:00~16:00 조직이론과 설계 3단원 공부 (핵심 개념 정리) [ ]"}, {"text": "일 17:00~18:00 경영학원론 3강 15p 정리 및 암기 (2/2) [ ]"}, {"text": "일 18:00~19:00 미시경제학 2단원 21~30p [ ]"}, {"text": "일 20:00~21:00 투자론 2단원 1~10p [ ]"}, {"text": "일 21:00~22:00 조직이론과 설계 3단원 족보 풀기 및 오픈북 위치 파악 [ ]"}, {"text": "일 22:00~23:00 미시경제학 2단원 31~40p [ ]"}, {"text": "일 23:00~24:00 경영학원론 4강 15p 정리 및 암기 (1/2) [ ]"}, {"text": "12/1 월 13:30~14:30 미시경제학 2단원 41~50p [ ]"}, {"text": "월 14:30~15:30 투자론 2단원 11~20p [ ]"}, {"text": "월 15:30~16:30 경영학원론 4강 15p 정리 및 암기 (2/2) [ ]"}, {"text": "월 16:30~17:30 조직이론과 설계 4단원 공부 및 족보 풀기 (초기 학습 완료) [ ]"}, {"text": "월 18:30~19:30 미시경제학 2단원 51~60p (2단원 완료) [ ]"}, {"text": "월 20:30~21:30 투자론 2단원 21~30p [ ]"}, {"text": "월 21:30~22:30 경영학원론 5강 30p 정리 및 암기 (초기 학습 완료) [ ]"}, {"text": "월 22:30~23:30 미시경제학 3단원 1~10p [ ]"}, {"text": "12/2 화 19:00~20:00 미시경제학 3단원 11~20p [ ]"}, {"text": "화 20:00~21:00 투자론 2단원 31~40p [ ]"}, {"text": "화 21:00~22:00 미시경제학 3단원 21~30p [ ]"}, {"text": "화 22:00~23:00 투자론 2단원 41~50p [ ]"}, {"text": "화 23:00~24:00 미시경제학 3단원 31~40p [ ]"}, {"text": "12/3 수 21:00~22:00 미시경제학 3단원 41~50p [ ]"}, {"text": "수 22:00~23:00 미시경제학 3단원 51~60p (3단원 완료) [ ]"}, {"text": "수 23:00~24:00 투자론 2단원 51~60p (2단원 완료) [ ]"}, {"text": "12/4 목 13:00~14:00 미시경제학 4단원 1~10p [ ]"}, {"text": "목 14:00~15:00 투자론 3단원 1~10p [ ]"}, {"text": "목 15:00~16:00 미시경제학 4단원 11~20p [ ]"}, {"text": "목 17:00~18:00 소비자행동 6장 15p 암기 (1/4) [ ]"}, {"text": "목 18:00~19:00 미시경제학 4단원 21~30p [ ]"}, {"text": "목 20:00~21:00 소비자행동 6장 15p 암기 (2/4) [ ]"}, {"text": "목 21:00~22:00 투자론 3단원 11~20p [ ]"}, {"text": "목 22:00~23:00 미시경제학 4단원 31~40p [ ]"}, {"text": "목 23:00~24:00 소비자행동 6장 15p 암기 (3/4) [ ]"}, {"text": "12/5 금 15:00~16:00 미시경제학 4단원 41~50p [ ]"}, {"text": "금 16:00~17:00 투자론 3단원 21~30p [ ]"}, {"text": "금 17:00~18:00 소비자행동 6장 15p 암기 (4/4) (6장 완료) [ ]"}, {"text": "금 19:00~20:00 미시경제학 4단원 51~60p (초기 학습 완료) [ ]"}, {"text": "금 20:00~21:00 투자론 3단원 31~40p [ ]"}, {"text": "금 21:00~22:00 소비자행동 7장 20p 암기 (1/3) [ ]"}, {"text": "금 22:00~23:00 투자론 3단원 41~50p [ ]"}, {"text": "금 23:00~24:00 소비자행동 7장 20p 암기 (2/3) [ ]"}, {"text": "12/6 토 21:00~22:00 투자론 3단원 51~60p (3단원 완료) [ ]"}, {"text": "토 22:00~23:00 투자론 4단원 1~10p [ ]"}, {"text": "토 23:00~24:00 소비자행동 7장 20p 암기 (3/3) (7장 완료) [ ]"}, {"text": "12/7 일 13:00~14:00 투자론 4단원 11~20p [ ]"}, {"text": "일 14:00~15:00 소비자행동 8장 20p 암기 (1/3) [ ]"}, {"text": "일 15:00~16:00 경영정보 시스템 1단원 40p 정리 및 암기 (1/2) [ ]"}, {"text": "일 17:00~18:00 투자론 4단원 21~30p [ ]"}, {"text": "일 18:00~19:00 소비자행동 8장 20p 암기 (2/3) [ ]"}, {"text": "일 20:00~21:00 투자론 4단원 31~40p [ ]"}, {"text": "일 21:00~22:00 소비자행동 8장 20p 암기 (3/3) (8장 완료) [ ]"}, {"text": "일 22:00~23:00 투자론 4단원 41~50p [ ]"}, {"text": "일 23:00~24:00 경영정보 시스템 2단원 40p 정리 및 암기 (2/2) [ ]"}, {"text": "12/8 월 13:30~14:30 투자론 4단원 51~60p (4단원 완료) [ ]"}, {"text": "월 14:30~15:30 소비자행동 9장 20p 암기 (1/3) [ ]"}, {"text": "월 15:30~16:30 경영정보 시스템 3단원 40p 정리 및 암기 (1/2) [ ]"}, {"text": "월 17:30~18:30 투자론 5단원 1~10p [ ]"}, {"text": "월 18:30~19:30 소비자행동 9장 20p 암기 (2/3) [ ]"}, {"text": "월 20:30~21:30 투자론 5단원 11~20p [ ]"}, {"text": "월 21:30~22:30 소비자행동 9장 20p 암기 (3/3) (9장 완료) [ ]"}, {"text": "월 22:30~23:30 경영정보 시스템 4단원 40p 정리 및 암기 (2/2) [ ]"}, {"text": "12/9 화 19:00~20:00 소비자행동 10장 20p 암기 (1/3) [ ]"}, {"text": "화 20:00~21:00 경영정보 시스템 5단원 40p 정리 및 암기 (1/2) [ ]"}, {"text": "화 21:00~22:00 소비자행동 10장 20p 암기 (2/3) [ ]"}, {"text": "화 22:00~23:00 D-1 복습 미시, 경영, 조직이론 핵심 개념 및 오답 점검 [ ]"}, {"text": "화 23:00~24:00 소비자행동 10장 20p 암기 (3/3) (10장 완료) [ ]"}, {"text": "12/10 수 시험일 미시/경영/조직 시험 집중 [ ]"}, {"text": "12/11 목 13:00~14:00 투자론 1단원 핵심 요약 및 암기 [ ]"}, {"text": "12/12 금 시험일 소비자행동/투자론 시험 집중 [ ]"}, {"text": "12/13 토 21:00~22:00 MIS 최종 복습 전 범위 최종 암기 점검 (1/2) [ ]"}, {"text": "12/14 일 13:00~24:00 휴식 충분한 수면 및 컨디션 조절! [ ]"}, {"text": "12/15 월 시험일 경영정보 시스템 시험 집중 [ ]"}];
+
+// Utility to parse date token in task.text; basic heuristic to find lines starting with MM/DD or 12/3 etc.
+function extractDate(txt) {
+  const m = txt.match(/\d{1,2}\/\d{1,2}/);
+  if (m) return m[0];
+  return null;
+}
+
+function isTodayTask(task) {
+  const d = extractDate(task.text);
+  if (!d) return false;
+  const parts = d.split('/');
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth()+1;
+  const day = now.getDate();
+  return Number(parts[0]) === month && Number(parts[1]) === day;
+}
+
+// Save / load state
+const STORAGE_KEY = 'pdf_todo_state_v1';
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+// Default settings
+if (!state.settings) state.settings = { goal: 0, method: 'count_today' };
+if (!state.checked) state.checked = {};
+
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function render(){
+  const todayEl = document.getElementById('todayDate');
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+  todayEl.textContent = today.toLocaleDateString('ko-KR', options);
+
+  const todoWrap = document.getElementById('todoList');
+  todoWrap.innerHTML = '';
+
+  tasks.forEach((t, idx) => {
+    const item = document.createElement('div');
+    item.className = 'task';
+    const id = 'task_' + idx;
+    const checked = !!state.checked[id];
+    item.innerHTML = `
+      <label><input type="checkbox" id="${id}" ${checked? 'checked':''}> <span class="task-text">${t.text}</span></label>
+    `;
+    todoWrap.appendChild(item);
+    const cb = item.querySelector('input[type=checkbox]');
+    cb.addEventListener('change', () => {
+      state.checked[id] = cb.checked;
+      saveState();
+      updateProgress();
+      if (getCompletionPercent() === 100) fireConfetti();
+    });
+  });
+
+  // set goal input
+  document.getElementById('goalInput').value = state.settings.goal || 0;
+  updateProgress();
+}
+
+// Progress calculation: default method = today's tasks count (option 1)
+function getTodayTaskIds(){
+  const ids = [];
+  tasks.forEach((t, idx) => {
+    const id = 'task_' + idx;
+    if (isTodayTask(t)) ids.push(id);
+  });
+  return ids;
+}
+
+function getCompletionPercent(){
+  const method = state.settings.method;
+  if (method === 'count_today') {
+    const todayIds = getTodayTaskIds();
+    if (todayIds.length === 0) return 0;
+    const done = todayIds.filter(id=>state.checked[id]).length;
+    return Math.round(done / todayIds.length * 100);
+  } else if (state.settings.goal && state.settings.goal>0) {
+    const todayIds = getTodayTaskIds();
+    const done = todayIds.filter(id=>state.checked[id]).length;
+    return Math.round(Math.min(done, state.settings.goal) / state.settings.goal * 100);
+  }
+  return 0;
+}
+
+function updateProgress(){
+  const pct = getCompletionPercent();
+  document.getElementById('percent').textContent = pct + '%';
+  const bar = document.getElementById('progressBar');
+  bar.style.width = pct + '%';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dt = document.getElementById('darkToggle');
+  dt.addEventListener('change', () => {
+    document.documentElement.classList.toggle('dark', dt.checked);
+    state.settings.dark = dt.checked;
+    saveState();
+  });
+  if (state.settings.dark) { document.documentElement.classList.add('dark'); dt.checked = true; }
+
+  const goalInput = document.getElementById('goalInput');
+  goalInput.addEventListener('change', ()=>{ state.settings.goal = Number(goalInput.value)||0; saveState(); updateProgress(); });
+
+  document.getElementById('resetBtn').addEventListener('click', ()=>{ if (confirm('모든 체크를 초기화할까요?')) { state.checked = {}; saveState(); render(); } });
+
+  render();
+});
+
+function fireConfetti(){
+  for (let i=0;i<60;i++){ 
+    const c = document.createElement('div');
+    c.className='confetti';
+    c.style.left = Math.random()*100 + '%';
+    c.style.background = `hsl(${Math.random()*360},80%,60%)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3000);
+  }
+}
+</script>
+
+</body>
+</html>
